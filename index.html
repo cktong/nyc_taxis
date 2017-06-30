@@ -28,82 +28,138 @@
 
 <script>
 
-mapboxgl.accessToken = 'pk.eyJ1IjoianBvbSIsImEiOiJjaXVzejJrOWswMGVlMm9vZWl2aXRsMmJjIn0.gz6mngDtkn3ldkyFhaErbA';
+mapboxgl.accessToken = 'pk.eyJ1IjoiY2hyaXNrdG9uZyIsImEiOiJjaXZqdHNyeHIwMHR1MnRueGN3NmJrbnlrIn0.5Dw0xnjS4DNz4anyFyJRDw';
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/light-v9',
+    style: 'mapbox://styles/chrisktong/cj2pqrhkr004m2rmv9tg2drt5',
     center: [-73.998,40.721],
     zoom: 11
 });
 
-var dataUrl = 'https://storage.googleapis.com/nyc-taxi-airport/dbscan_clusters.json';
-
-fetch(dataUrl)
-.then(function(response) {
-    return response.json().then(function(dataset) {
-        map.on('load', function () {
-            // Add a GeoJSON source containing the state polygons.
-            map.addSource('pickup', {
-                'type': 'geojson',
-                'data': dataset
-            });
-
-            // Add a layer showing the state polygons.
-            map.addLayer({
-                'id': 'pickup',
-                'type': 'circle',
-                'source': 'pickup',
-                'layout': {
-                    'visibility': 'visible'
-                },
-                'paint': {
-                    'circle-radius': 1,
-                    'circle-color': {
-                        property: 'cluster',
-                        type: 'exponential',
-                        "stops": [
-                            ['-1', "black"],
-                            ['0', "#F9FD02"],
-                            ['4', "#0DFF01"],
-                            ['8', "#01FFDE"],
-                            ['12', "#0167FF"],
-                            ['16', "#AF01FF"],
-                            ['22', "#B00F19"]
-
-                ]
-                    }
-                }
-            });
-
-        });
+var layername = 'dbscan-clusters-cz1xoa';
 
 
-        // When a click event occurs near a polygon, open a popup at the location of
-        // the feature, with description HTML from its properties.
-        map.on('click', function (e) {
-            var features = map.queryRenderedFeatures(e.point, { layers: ['pickup'] });
-            if (!features.length) {
-                return;
+var pickup_number = {
+    property: 'cluster',
+    type: 'exponential', 
+    stops: [
+            ['-1', "black"],
+            ['0', "#F9FD02"],
+            ['4', "#0DFF01"],
+            ['8', "#01FFDE"],
+            ['12', "#0167FF"],
+            ['16', "#AF01FF"],
+            ['22', "#B00F19"]]
+        }
+
+map.on('load', function () {
+    // Add a GeoJSON source containing the state polygons.
+    // map.addSource('pickup', {
+    //     'type': 'geojson',
+    //     'data': dataset
+    // });
+    map.setPaintProperty(layername, 'circle-color', pickup_number);   
+    map.setPaintProperty(layername, 'circle-radius', 1);
+    // map.setPaintProperty(layername, 'circle-stroke-width',  0.05);
+
+    // Add a layer showing the state polygons.
+    map.addLayer({
+        'id': 'pickup',
+        'type': 'circle',
+        'source': 'pickup',
+        'layout': {
+            'visibility': 'visible'
+        },
+        'paint': {
+            'circle-radius': 1,
+            'circle-color': {
+                property: 'cluster',
+                type: 'exponential',
+                "stops": [
+                    ['-1', "black"],
+                    ['0', "#F9FD02"],
+                    ['4', "#0DFF01"],
+                    ['8', "#01FFDE"],
+                    ['12', "#0167FF"],
+                    ['16', "#AF01FF"],
+                    ['22', "#B00F19"]
+
+        ]
             }
-
-            var feature = features[0];
-
-            var popup = new mapboxgl.Popup()
-                .setLngLat(map.unproject(e.point))
-                .setHTML('Cluster : '+ feature.properties.cluster
-                        )
-                .addTo(map);
-        });
-
-        // Use the same approach as above to indicate that the symbols are clickable
-        // by changing the cursor style to 'pointer'.
-        map.on('mousemove', function (e) {
-            var features = map.queryRenderedFeatures(e.point, { layers: ['pickup'] });
-            map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
-        });
-
+        }
     });
 });
+
+// fetch(dataUrl)
+// .then(function(response) {
+//     return response.json().then(function(dataset) {
+//         map.on('load', function () {
+//             // Add a GeoJSON source containing the state polygons.
+//             // map.addSource('pickup', {
+//             //     'type': 'geojson',
+//             //     'data': dataset
+//             // });
+//             map.setPaintProperty(layername, 'circle-color', picknumber_number);   
+//             map.setPaintProperty(layername, 'circle-radius', 1);
+//             // map.setPaintProperty(layername, 'circle-stroke-width',  0.05);
+
+//             // Add a layer showing the state polygons.
+//             map.addLayer({
+//                 'id': 'pickup',
+//                 'type': 'circle',
+//                 'source': 'pickup',
+//                 'layout': {
+//                     'visibility': 'visible'
+//                 },
+//                 'paint': {
+//                     'circle-radius': 1,
+//                     'circle-color': {
+//                         property: 'cluster',
+//                         type: 'exponential',
+//                         "stops": [
+//                             ['-1', "black"],
+//                             ['0', "#F9FD02"],
+//                             ['4', "#0DFF01"],
+//                             ['8', "#01FFDE"],
+//                             ['12', "#0167FF"],
+//                             ['16', "#AF01FF"],
+//                             ['22', "#B00F19"]
+
+//                 ]
+//                     }
+//                 }
+//             });
+
+//         });
+
+
+//         // When a click event occurs near a polygon, open a popup at the location of
+//         // the feature, with description HTML from its properties.
+//         map.on('click', function (e) {
+//             var features = map.queryRenderedFeatures(e.point, { layers: ['pickup'] });
+//             if (!features.length) {
+//                 return;
+//             }
+
+//             var feature = features[0];
+
+//             var popup = new mapboxgl.Popup()
+//                 .setLngLat(map.unproject(e.point))
+//                 .setHTML('Cluster : '+ feature.properties.cluster
+//                         )
+//                 .addTo(map);
+//         });
+
+//         // Use the same approach as above to indicate that the symbols are clickable
+//         // by changing the cursor style to 'pointer'.
+//         map.on('mousemove', function (e) {
+//             var features = map.queryRenderedFeatures(e.point, { layers: ['pickup'] });
+//             map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+//         });
+
+//     });
+// });
+
 
 function fade(class_object){
     $(class_object).fadeToggle(800)
